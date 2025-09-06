@@ -2,9 +2,11 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import Message
 
+from bot.db.repositories.user_repo import UserRepo
+
 class InitMiddleware(BaseMiddleware):
-    def __init__(self) -> None:
-        self.counter = 0
+    def __init__(self, session_maker) -> None:
+        self.session_maker = session_maker
 
     async def __call__(
         self,
@@ -12,6 +14,6 @@ class InitMiddleware(BaseMiddleware):
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
-        self.counter += 1
-        data['counter'] = self.counter
-        return await handler(event, data)
+        async with self.session_maker() as session:
+            data['user_repo'] = UserRepo(session=session)
+            return await handler(event, data)
