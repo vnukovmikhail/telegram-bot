@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 
 from bot.db.repositories.user_repo import UserRepo
-
+from bot.templates import MAIN
 router = Router()
 
 @router.message(CommandStart())
@@ -13,4 +13,4 @@ async def cmd_start(msg: Message, user_repo: UserRepo):
         full_name=msg.from_user.full_name,
         user_name=msg.from_user.username,
     )
-    await msg.answer(f'Hi!')
+    await msg.answer(f'Hi!', reply_markup=MAIN)
